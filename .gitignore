@@ -1,0 +1,10 @@
+vendor/
+package-lock.json
+composer.lock
+# IDE konfigurace
+.vscode/
+nbproject/
+.idea/
+*.orig
+*.bak
+
