@@ -98,6 +98,32 @@ class Reflection
 		return self::$cache[__METHOD__][$className];
 	}
 
+	/**
+	 * @param string $class
+	 * @return array
+	 */
+	public static function getUsedTraits(string $class): array
+	{
+		$results = [];
+
+		foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
+			$results += static::traitUsesRecursive($class);
+		}
+
+		return array_unique($results);
+	}
+
+	private static function traitUsesRecursive(string $trait)
+	{
+		$traits = class_uses($trait);
+
+		foreach ($traits as $trait) {
+			$traits += static::traitUsesRecursive($trait);
+		}
+
+		return $traits;
+	}
+
     /**
      * Vrací 'magic' properties (podobně jako a zkopírováno z Nette/SmartObject) z anotací nad třídou
 	 * a z anotací předků / trait
@@ -136,4 +162,24 @@ class Reflection
         return $matches;
     }
 
+
+	/**
+	 * @param \ReflectionProperty $ref
+	 * @param string $name
+	 * @return string|null
+	 */
+	public static function parseAnnotation(\ReflectionProperty $ref, string $name): ?string
+	{
+		$re = '#[\s*]@' . preg_quote($name, '#') . '(?=\s|$)[ \t]+(.+)?#';
+		if ($ref->getDocComment() && preg_match($re, trim($ref->getDocComment(), '/*'), $m)) {
+			return $m[1] ?? '';
+		}
+
+		return null;
+	}
+
+	public static function expandClassName(string $name, \ReflectionClass $context): string
+	{
+		return \Nette\Utils\Reflection::expandClassName($name, $context);
+	}
 }
