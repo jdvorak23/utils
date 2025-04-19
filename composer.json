@@ -1,8 +1,6 @@
 {
   "name": "cesys/utils",
   "description": "Utils",
-  "version": "1.0.8",
-  "type": "library",
   "require": {
     "php": ">=7.4",
     "nette/utils": ">=3.2"
