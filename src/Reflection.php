@@ -53,11 +53,14 @@ class Reflection
         if (isset(self::$cache[__METHOD__][$className])) {
             return self::$cache[__METHOD__][$className];
         }
+
         $result = [];
         foreach (self::getReflectionClass($className)->getProperties() as $property) {
             $result[$property->getName()] = $property;
         }
+
         self::$cache[__METHOD__][$className] = $result;
+        return self::$cache[__METHOD__][$className];
     }
 
     /**
