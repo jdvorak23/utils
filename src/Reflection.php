@@ -42,6 +42,25 @@ class Reflection
     }
 
     /**
+     * Vrací všechny \ReflectionProperty properties definované ve třídě $className
+     * Bez private properties v předcích
+     * @param string $className
+     * @return \ReflectionProperty[] Klíče jsou názvy properties
+     * @throws \ReflectionException
+     */
+    public static function &getReflectionPropertiesOfClassByName(string $className): array
+    {
+        if (isset(self::$cache[__METHOD__][$className])) {
+            return self::$cache[__METHOD__][$className];
+        }
+        $result = [];
+        foreach (self::getReflectionClass($className)->getProperties() as $property) {
+            $result[$property->getName()] = $property;
+        }
+        self::$cache[__METHOD__][$className] = $result;
+    }
+
+    /**
 	 * Vrací všechny \ReflectionProperty properties definované ve třídě $className
 	 * I s private properties v předcích
      * @param string $className
